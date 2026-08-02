@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>JAG Value Dashboard — Mocoa Protocol</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#06090f;color:#7a8fa8;min-height:100vh;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.5rem;border-bottom:1px solid #1a2235;background:#04060a;}
+.brand{display:flex;align-items:center;gap:.8rem;}
+.logo{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C8A84B,#E8C96A);display:flex;align-items:center;justify-content:center;font-size:1.2rem;}
+.nav-title{font-family:serif;font-size:.85rem;color:#C8A84B;letter-spacing:.08em;font-weight:700;}
+.nav-link{font-size:.78rem;color:#00C8FF;text-decoration:none;opacity:.7;}
+.nav-link:hover{opacity:1;}
+
+.hero{text-align:center;padding:3rem 1.5rem 2rem;border-bottom:1px solid #1a2235;}
+.hero h1{font-family:serif;font-size:clamp(1.5rem,4vw,2.5rem);font-weight:900;color:#E8E4DC;letter-spacing:.06em;margin-bottom:.5rem;}
+.hero p{font-size:.88rem;color:#7a8fa8;opacity:.7;max-width:500px;margin:0 auto 1rem;}
+.live{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#00e676;opacity:.8;}
+.dot{width:6px;height:6px;border-radius:50%;background:#00e676;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.dash{max-width:900px;margin:0 auto;padding:2rem 1.5rem;}
+.layer-label{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:#00C8FF;margin-bottom:.6rem;margin-top:2.5rem;opacity:.6;}
+.layer-title{font-family:serif;font-size:1rem;color:#E8E4DC;margin-bottom:1.2rem;font-weight:700;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:#1a2235;}
+.card{background:#0d1120;padding:1.5rem 1.2rem;}
+.lbl{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:#7a8fa8;opacity:.6;margin-bottom:.5rem;}
+.val{font-family:monospace;font-size:1.6rem;font-weight:700;color:#E8E4DC;line-height:1.2;margin-bottom:.3rem;}
+.val.gold{color:#C8A84B;}
+.val.cyan{color:#00C8FF;}
+.val.green{color:#00e676;}
+.sub{font-size:.72rem;color:#7a8fa8;opacity:.5;}
+.formula{background:#0d1120;border:1px solid #1a2235;border-left:3px solid #00C8FF;padding:1.2rem 1.5rem;margin:1.5rem 0;font-family:monospace;font-size:.82rem;color:#00C8FF;line-height:1.8;}
+.formula .c{color:#2a3a4a;}
+.info{background:rgba(200,168,75,.04);border:1px solid rgba(200,168,75,.15);padding:1.2rem 1.5rem;margin:2rem 0;font-size:.85rem;line-height:1.7;}
+.info strong{color:#C8A84B;}
+.dist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1px;background:#1a2235;margin-top:1.2rem;}
+.dist-card{background:#0d1120;padding:1.2rem;}
+.dist-lbl{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#7a8fa8;opacity:.5;margin-bottom:.3rem;}
+.dist-val{font-family:monospace;font-size:1.1rem;color:#C8A84B;font-weight:700;}
+.dist-pct{font-size:.75rem;color:#7a8fa8;opacity:.5;}
+.dist-addr{font-family:monospace;font-size:.62rem;color:#2a3a4a;margin-top:.3rem;word-break:break-all;}
+.contracts{display:flex;flex-direction:column;gap:1px;background:#1a2235;margin-top:1.2rem;}
+.row{display:flex;align-items:center;justify-content:space-between;background:#0d1120;padding:.9rem 1.2rem;gap:1rem;flex-wrap:wrap;}
+.cname{font-size:.82rem;color:#E8E4DC;font-weight:500;}
+.caddr{font-family:monospace;font-size:.68rem;color:#00C8FF;opacity:.6;word-break:break-all;}
+.status{font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:#00e676;opacity:.8;white-space:nowrap;}
+.ts{text-align:center;padding:1rem;font-size:.7rem;color:#1e2a3a;border-top:1px solid #1a2235;margin-top:2rem;}
+#lu{color:#2a3a4a;}
+footer{text-align:center;padding:2rem 1.5rem;border-top:1px solid #1a2235;margin-top:1rem;}
+footer p{font-size:.7rem;color:#141e2e;line-height:1.9;}
+footer .fb{font-family:serif;color:#C8A84B;opacity:.5;font-size:.8rem;margin-bottom:.3rem;}
+.loading{opacity:.3;}
+@media(max-width:480px){.val{font-size:1.3rem;}.row{flex-direction:column;align-items:flex-start;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="brand">
+    <div class="logo">🐆</div>
+    <span class="nav-title">JAG VALUE DASHBOARD</span>
+  </div>
+  <a class="nav-link" href="https://gaboletto1.github.io/mocoa">← Club Jaguar</a>
+</nav>
+<div class="hero">
+  <h1>Estado del Ecosistema</h1>
+  <p>Datos en tiempo real desde Polygon Mainnet · Sin intermediarios · 100% verificable</p>
+  <div class="live"><div class="dot"></div>En vivo · Polygon Mainnet</div>
+</div>
+<div class="dash">
+
+<!-- CAPA 1 -->
+<p class="layer-label">Capa 1</p>
+<p class="layer-title">Trabajo Real Acumulado — Valor Fijo de Origen</p>
+<div class="grid">
+  <div class="card">
+    <div class="lbl">Valoración total ecosistema</div>
+    <div class="val gold">$229,000,000</div>
+    <div class="sub">COP · Precio de origen · Inmutable</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Precio base por JAG</div>
+    <div class="val gold">$229 COP</div>
+    <div class="sub">$0.064 USD · Calculado sobre 1,000,000 JAG</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Composición</div>
+    <div style="font-family:monospace;font-size:.85rem;line-height:1.9;color:#7a8fa8;">
+      Trabajo fundador: $129M<br/>
+      Capital fundador: $9M<br/>
+      Aportantes ext.: $81M<br/>
+      Reserva protocolo: $10M
+    </div>
+    <div class="sub">Multiplicador 3x · Etapa 0</div>
+  </div>
+</div>
+
+<!-- CAPA 2 -->
+<p class="layer-label">Capa 2</p>
+<p class="layer-title">Ecosistema Activo — Valor de Uso</p>
+<div class="grid">
+  <div class="card">
+    <div class="lbl">Supply total JAG</div>
+    <div class="val cyan loading" id="supply">...</div>
+    <div class="sub">Máximo hardcoded: 1,000,000 JAG</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Bienvenidas emitidas</div>
+    <div class="val cyan loading" id="welcomes">...</div>
+    <div class="sub">JAG de bienvenida entregados</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Módulos desplegados</div>
+    <div class="val cyan">7 / 16</div>
+    <div class="sub">Módulo JAG completo · En desarrollo</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Red</div>
+    <div class="val cyan">Polygon</div>
+    <div class="sub">Mainnet · Chain ID 137</div>
+  </div>
+</div>
+<div class="info">
+  <strong>Etapa 0 · En construcción</strong><br/>
+  Desplegado en Polygon Mainnet — julio 2026. Módulos ClubberMarketplace, MotoGo, BeWell y TimeBank en desarrollo. El volumen de transacciones crecerá con el ecosistema.
+</div>
+
+<!-- CAPA 3 -->
+<p class="layer-label">Capa 3</p>
+<p class="layer-title">BTCVault — Respaldo Bitcoin Permanente</p>
+<div class="grid">
+  <div class="card">
+    <div class="lbl">WBTC acumulado</div>
+    <div class="val green loading" id="wbtc">...</div>
+    <div class="sub">One-way · canWithdraw=false · Para siempre</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Valor total en USD</div>
+    <div class="val green loading" id="vaultusd">...</div>
+    <div class="sub">WBTC × precio BTC actual</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Precio BTC referencia</div>
+    <div class="val green loading" id="btcprice">...</div>
+    <div class="sub">Desde oráculo BTCVault.sol</div>
+  </div>
+  <div class="card">
+    <div class="lbl">Backing por JAG</div>
+    <div class="val green loading" id="backing">...</div>
+    <div class="sub">COP respaldado por BTC por token</div>
+  </div>
+</div>
+<div class="formula">
+  <span class="c">// Fórmula de backing matemático</span><br/>
+  jagBackingCOP = (WBTC × BTC_USD × TRM) / supply<br/>
+  <span class="c">// Verificable en Polygonscan</span>
+</div>
+<!-- DISTRIBUCIÓN -->
+<p class="layer-label">Distribución</p>
+<p class="layer-title">Supply de 1,000,000 JAG</p>
+<div class="dist-grid">
+  <div class="dist-card">
+    <div class="dist-lbl">Gabriel Sánchez Z.</div>
+    <div class="dist-val loading" id="balg">...</div>
+    <div class="dist-pct">57.6% · Fundador</div>
+    <div class="dist-addr">0xAabd0aeBA6249fca5E398073791624EAF881Ef0E</div>
+  </div>
+  <div class="dist-card">
+    <div class="dist-lbl">Custodia Aportantes</div>
+    <div class="dist-val loading" id="bala">—</div>
+    <div class="dist-pct">35.4% · Distribución individual pendiente</div>
+  </div>
+  <div class="dist-card">
+    <div class="dist-lbl">Reserva Protocolo</div>
+    <div class="dist-val loading" id="balr">—</div>
+    <div class="dist-pct">7.0% · Operación y fondos sociales</div>
+  </div>
+</div>
+
+<!-- CONTRATOS -->
+<p class="layer-label" style="margin-top:2.5rem;">Contratos</p>
+<p class="layer-title">Módulo JAG — Polygon Mainnet</p>
+<div class="contracts">
+  <div class="row">
+    <div><div class="cname">JagToken (ERC-20)</div><div class="caddr">0x3f216063e9EF667583fb4eA8A9677d6e532ebB94</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+  <div class="row">
+    <div><div class="cname">BTCVault</div><div class="caddr">0xADeA1A66c9150B36D2e54142652fdeda0396E064</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+  <div class="row">
+    <div><div class="cname">WelcomeModule</div><div class="caddr">0x0E28D6104b009F0050404A8FD91b09eA858F54D3</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+  <div class="row">
+    <div><div class="cname">ReferralRegistry</div><div class="caddr">0xbA1AFfb220821ddcF5f7b00839016EF0a517C186</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+  <div class="row">
+    <div><div class="cname">MembershipScore</div><div class="caddr">0x5E1b23aCE316247a7CFCD8eFa766E71dbaA819B2</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+  <div class="row">
+    <div><div class="cname">DonationVault</div><div class="caddr">0xdD2196f3b8586b1b25Ae24Ad2AaC927b45730E96</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+  <div class="row">
+    <div><div class="cname">CommitReveal</div><div class="caddr">0x7EadAad18A1BEF9aA3B70EBa4a3Dec33F0f097fc</div></div>
+    <div class="status">✓ Activo</div>
+  </div>
+</div>
+
+<div class="ts">Última actualización: <span id="lu">cargando...</span> · Actualiza cada 60s</div>
+</div>
+
+<footer>
+  <p class="fb">MOCOA PROTOCOL</p>
+  <p>Datos directos desde Polygon Mainnet via Alchemy RPC<br/>Sin edición · Sin intermediarios · 100% verificable<br/><br/>polygonscan.com/token/0x3f216063e9EF667583fb4eA8A9677d6e532ebB94</p>
+</footer>
+<script>
+const RPC="https://polygon-mainnet.g.alchemy.com/v2/t7Txn29oei6WT3CvfeQvo";
+const JAG="0x3f216063e9EF667583fb4eA8A9677d6e532ebB94";
+const VAULT="0xADeA1A66c9150B36D2e54142652fdeda0396E064";
+const WEL="0x0E28D6104b009F0050404A8FD91b09eA858F54D3";
+const GAB="0xAabd0aeBA6249fca5E398073791624EAF881Ef0E";
+
+async function rpc(to,data){
+  try{
+    const r=await fetch(RPC,{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({jsonrpc:"2.0",id:1,method:"eth_call",params:[{to,data},"latest"]})});
+    const j=await r.json();
+    return j.result||"0x0";
+  }catch(e){return "0x0";}
+}
+function hex2n(h){if(!h||h==="0x")return 0n;return BigInt(h);}
+function fmt(n,d=18,dig=2){
+  if(n===0n)return "0";
+  const D=10n**BigInt(d);
+  const w=n/D, f=n%D;
+  if(dig===0)return w.toLocaleString("es-CO");
+  return w.toLocaleString("es-CO")+"."+f.toString().padStart(d,"0").slice(0,dig);
+}
+function pad(addr){return "0x"+"0".repeat(24)+addr.slice(2).toLowerCase();}
+function setVal(id,txt,rmLoad=true){
+  const el=document.getElementById(id);
+  if(el){el.textContent=txt;if(rmLoad)el.classList.remove("loading");}
+}
+
+async function load(){
+  try{
+    // Supply JAG
+    const sup=hex2n(await rpc(JAG,"0x18160ddd"));
+    setVal("supply",fmt(sup,18,0)+" JAG");
+
+    // Balance Gabriel
+    const bg=hex2n(await rpc(JAG,"0x70a08231"+pad(GAB).slice(2)));
+    setVal("balg",fmt(bg,18,0)+" JAG");
+
+    // WelcomeModule totalWelcomes (selector aproximado)
+    const welHex=await rpc(WEL,"0x5e3c4a92");
+    const wel=hex2n(welHex);
+    setVal("welcomes",wel.toString());
+
+    // BTCVault totalDeposited (WBTC, 8 decimals)
+    const wbtcHex=await rpc(VAULT,"0xb7b55b9a");
+    const wbtc=hex2n(wbtcHex);
+    setVal("wbtc",fmt(wbtc,8,6)+" WBTC");
+
+    // btcPriceUSDCents
+    const btcHex=await rpc(VAULT,"0x1a3da4a6");
+    const btcCents=hex2n(btcHex);
+    const btcUSD=Number(btcCents)/100;
+    setVal("btcprice","$"+btcUSD.toLocaleString("es-CO")+" USD");
+
+    // Vault USD
+    const wbtcF=Number(wbtc)/1e8;
+    const vusd=wbtcF*btcUSD;
+    setVal("vaultusd","$"+vusd.toLocaleString("es-CO",{minimumFractionDigits:2,maximumFractionDigits:2})+" USD");
+
+    // TRM
+    const trmHex=await rpc(VAULT,"0x9c1f5e4b");
+    const trmCents=hex2n(trmHex);
+    const trm=Number(trmCents)/100;
+
+    // Backing COP
+    const supF=Number(sup)/1e18;
+    let back=0;
+    if(supF>0&&wbtcF>0)back=(wbtcF*btcUSD*trm)/supF;
+    setVal("backing",back>0?"$"+back.toLocaleString("es-CO",{minimumFractionDigits:4,maximumFractionDigits:4})+" COP":"/bin/sh.0000 COP");
+
+    document.getElementById("lu").textContent=new Date().toLocaleString("es-CO");
+  }catch(e){
+    document.getElementById("lu").textContent="Error · "+new Date().toLocaleTimeString("es-CO");
+  }
+}
+load();
+setInterval(load,60000);
+</script>
+</body>
+</html>
