@@ -111,10 +111,10 @@
   <div class="wallet-box">
     <h3>Solicitar membresía</h3>
     <div class="ref-banner" id="ref-banner">🐆 Fuiste invitado por <strong id="ref-display"></strong> — quedarás vinculado como su referido de por vida.</div>
-    <p>Ingresa tu dirección en Polygon (0x...) y tu nombre.</p>
+    <p>Ingresa tu dirección en Polygon (0x...).</p>
     <div class="input-group">
       <input type="text" id="wallet-input" placeholder="0x... dirección Polygon" maxlength="42" />
-      <input type="text" id="name-input" placeholder="Tu nombre (opcional)" maxlength="60" />
+      
       <button class="btn-primary" onclick="solicitarMembresia()">Solicitar 1 JAG de bienvenida</button>
     </div>
     <div id="status-msg"></div>
@@ -196,7 +196,6 @@
   /// Paso 1 — la persona deja su direccion y pide la verificacion.
   window.solicitarMembresia = async function () {
     const dir = ($("wallet-input")?.value || "").trim();
-    const nom = ($("name-input")?.value || "").trim();
     if (!esDir(dir)) return aviso("Esa dirección no parece válida. Debe empezar en 0x y tener 42 caracteres.", "error");
 
     aviso("Consultando tu estado en la cadena…");
@@ -214,7 +213,7 @@
 
       const texto =
         "Hola, quiero ser Clubber del Token Jaguar.\n" +
-        "Wallet: " + dir + (nom ? "\nNombre: " + nom : "") +
+        "Wallet: " + dir +
         (ref ? "\nMe invitó: " + ref : "");
       aviso(
         "Falta verificar tu identidad. Es un paso manual en esta primera etapa: " +
