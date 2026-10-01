@@ -161,7 +161,7 @@
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
 <script>
 (function () {
-  const RPC   = "https://polygon-rpc.com";
+  const RPCS  = ["https://polygon.drpc.org", "https://1rpc.io/matic"];
   const JAG   = "0x3f216063e9EF667583fb4eA8A9677d6e532ebB94";
   const KYC   = "0xaFC7b835e8AAC215F08866a546F8C054fFbA83C8";
   const WM    = "0x85479Ba8C7AA029f8fb4BCD340B37042Fd6e69c4";
@@ -191,7 +191,9 @@
                           "background:#14243a;color:#9fc6ff;");
   }
 
-  const lector = () => new ethers.JsonRpcProvider(RPC);
+  // Si un RPC publico falla, se intenta con el siguiente.
+  const lector = () => new ethers.FallbackProvider(
+    RPCS.map((u, i) => ({ provider: new ethers.JsonRpcProvider(u, 137, { staticNetwork: true }), priority: i + 1, weight: 1 })), 137, { quorum: 1 });
 
   /// Paso 1 — la persona deja su direccion y pide la verificacion.
   window.solicitarMembresia = async function () {
