@@ -264,7 +264,7 @@
   };
 
   // Quien invita, tomado del enlace
-  document.addEventListener("DOMContentLoaded", function () {
+  function iniciar() {
     if (esDir(ref)) {
       const b = $("ref-banner"), d = $("ref-display");
       if (d) d.textContent = ref.slice(0, 6) + "…" + ref.slice(-4);
@@ -281,7 +281,10 @@
       b.onclick = window.reclamarJAG;
       grupo.appendChild(b);
     }
-  });
+  }
+  // El script va al final del documento, asi que DOMContentLoaded ya paso.
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
+  else iniciar();
 })();
 </script>
 
