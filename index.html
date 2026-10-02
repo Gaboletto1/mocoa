@@ -191,6 +191,7 @@
       n.id = "status-msg";
       (document.querySelector(".input-group") || document.body).appendChild(n);
     }
+    n.style.display = "block";
     n.innerHTML = html;
     n.style.cssText = "margin-top:14px;padding:12px 14px;border-radius:10px;line-height:1.5;" +
       (tipo === "ok"    ? "background:#0d3321;color:#7ee2a8;" :
