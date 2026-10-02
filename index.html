@@ -159,6 +159,7 @@
 "></div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>if(typeof ethers==="undefined"){document.write('<script src="https://unpkg.com/ethers@6.13.4/dist/ethers.umd.min.js"><\/script>');}</script>
 <script>
 (function () {
   const RPCS  = ["https://polygon.drpc.org", "https://1rpc.io/matic"];
@@ -184,8 +185,12 @@
   const esDir = a => /^0x[0-9a-fA-F]{40}$/.test(a);
 
   function aviso(html, tipo) {
-    const n = $("status-msg");
-    if (!n) return;
+    let n = $("status-msg");
+    if (!n) {
+      n = document.createElement("div");
+      n.id = "status-msg";
+      (document.querySelector(".input-group") || document.body).appendChild(n);
+    }
     n.innerHTML = html;
     n.style.cssText = "margin-top:14px;padding:12px 14px;border-radius:10px;line-height:1.5;" +
       (tipo === "ok"    ? "background:#0d3321;color:#7ee2a8;" :
@@ -198,7 +203,13 @@
     RPCS.map((u, i) => ({ provider: new ethers.JsonRpcProvider(u, 137, { staticNetwork: true }), priority: i + 1, weight: 1 })), 137, { quorum: 1 });
 
   /// Paso 1 — la persona deja su direccion y pide la verificacion.
+  const sinEthers = () => {
+    if (typeof ethers === "undefined") { aviso("No se pudo cargar la librería de conexión. Revisa tu conexión a internet y recarga la página.", "error"); return true; }
+    return false;
+  };
+
   window.solicitarMembresia = async function () {
+    if (sinEthers()) return;
     const dir = ($("wallet-input")?.value || "").trim();
     if (!esDir(dir)) return aviso("Esa dirección no parece válida. Debe empezar en 0x y tener 42 caracteres.", "error");
 
@@ -232,6 +243,7 @@
 
   /// Paso 2 — ya verificado, reclama firmando desde su propia wallet.
   window.reclamarJAG = async function () {
+    if (sinEthers()) return;
     if (!window.ethereum) return aviso("No se detectó una wallet en este navegador. Instala MetaMask o Trust Wallet y vuelve a entrar desde su navegador.", "error");
     try {
       aviso("Conectando tu wallet…");
