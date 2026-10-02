@@ -178,7 +178,9 @@
   const ABI_JAG = ["function balanceOf(address) view returns (uint256)"];
 
   const $ = id => document.getElementById(id);
-  const ref = new URLSearchParams(location.search).get("ref") || "";
+  // Quien llega sin enlace de nadie queda bajo la wallet de Gabriel como Clubber.
+  const REF_DEFECTO = "0xec6d6A90733A07E5e8c537380ACB328319Db8563";
+  const ref = new URLSearchParams(location.search).get("ref") || REF_DEFECTO;
   const esDir = a => /^0x[0-9a-fA-F]{40}$/.test(a);
 
   function aviso(html, tipo) {
