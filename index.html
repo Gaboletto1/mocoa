@@ -114,7 +114,7 @@
     <p>Ingresa tu dirección en Polygon (0x...).</p>
     <div class="input-group">
       <input type="text" id="wallet-input" placeholder="0x... dirección Polygon" maxlength="42" />
-      <button class="btn-primary" onclick="solicitarMembresia()">Solicitar 1 JAG de bienvenida</button>
+      <button class="btn-primary" id="btn-unico" onclick="accionPrincipal()">Solicitar 1 JAG de bienvenida</button>
     </div>
     <div id="status-msg"></div>
   </div>
@@ -206,6 +206,30 @@
   }
 
   // Paso 1 — deja su dirección y pide la verificación.
+  // Un solo boton: segun el estado de la direccion, solicita o reclama.
+  window.accionPrincipal = function () {
+    if (!listo()) return;
+    var dir = ($("wallet-input") ? $("wallet-input").value : "").trim();
+    if (!esDir(dir)) return aviso("Esa dirección no parece válida. Debe empezar en 0x y tener 42 caracteres.", "error");
+    aviso("Consultando tu estado en la cadena…");
+    leer(WM, ABI_WM, "claimed", [dir]).then(function (ya) {
+      if (ya) return aviso("Esta dirección ya reclamó su JAG. Ya eres Clubber.", "ok");
+      return leer(KYC, ABI_KYC, "getLevel", [dir]).then(function (nivel) {
+        if (nivel >= 1) return window.reclamarJAG();
+        return pedirPorWhatsApp(dir);
+      });
+    }).catch(function (e) { aviso("No se pudo consultar la cadena: " + (e.shortMessage || e.message), "error"); });
+  };
+
+  function pedirPorWhatsApp(dir) {
+    var texto = "Hola, quiero ser Clubber del Token Jaguar.\nWallet: " + dir + (ref ? "\nMe invitó: " + ref : "");
+    aviso("Falta verificar tu identidad. En esta primera etapa es un paso manual: " +
+          "envíanos tu cédula por WhatsApp y te habilitamos. Luego vuelves aquí y el mismo botón te entrega tu JAG.<br><br>" +
+          '<a href="https://wa.me/' + WHATS + "?text=" + encodeURIComponent(texto) + '" target="_blank" ' +
+          'style="display:inline-block;padding:10px 16px;border-radius:8px;background:#25d366;color:#062b14;font-weight:600;text-decoration:none">' +
+          "Enviar por WhatsApp</a>", "info");
+  }
+
   window.solicitarMembresia = function () {
     if (!listo()) return;
     var dir = ($("wallet-input") ? $("wallet-input").value : "").trim();
@@ -285,16 +309,6 @@
       var b = $("ref-banner"), d = $("ref-display");
       if (d) d.textContent = ref.slice(0, 6) + "…" + ref.slice(-4);
       if (b) b.style.display = "block";
-    }
-    var grupo = document.querySelector(".input-group");
-    if (grupo && !$("btn-reclamar")) {
-      var btn = document.createElement("button");
-      btn.id = "btn-reclamar";
-      btn.className = "btn-primary";
-      btn.textContent = "Ya me verificaron — reclamar mi JAG";
-      btn.style.cssText = "margin-top:10px;background:#1b5e3a;color:#fff";
-      btn.onclick = window.reclamarJAG;
-      grupo.appendChild(btn);
     }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", iniciar);
