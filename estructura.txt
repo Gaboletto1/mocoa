@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mocoa Protocol — Club Jaguar</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+    :root{--gold:#C8A84B;--gold2:#E8C96A;--cyan:#00C8FF;--bg:#06090f;--dark:#0a0e18;--card:#0d1120;--border:#1a2235;--text:#7a8fa8;--white:#E8E4DC;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;}
+    .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3rem 1.5rem;background:radial-gradient(ellipse at 50% 35%,#0a1428 0%,var(--bg) 65%);}
+    .logo-wrap{width:200px;height:200px;border-radius:50%;overflow:hidden;margin-bottom:2rem;border:1.5px solid rgba(200,168,75,0.25);animation:glow 5s ease-in-out infinite;}
+    @keyframes glow{0%,100%{box-shadow:0 0 40px rgba(0,200,255,0.08),0 0 80px rgba(200,168,75,0.05);}50%{box-shadow:0 0 80px rgba(0,200,255,0.25),0 0 140px rgba(200,168,75,0.12);}}
+    .logo-wrap img{width:100%;height:100%;object-fit:cover;}
+    .hero h1{font-family:'Cinzel',serif;font-size:clamp(2rem,6vw,4rem);font-weight:900;color:var(--gold);letter-spacing:0.1em;line-height:1.1;margin-bottom:0.4rem;}
+    .hero .sub{font-size:0.65rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--cyan);margin-bottom:1.8rem;opacity:0.6;}
+    .hero p{font-size:clamp(0.9rem,2.5vw,1.05rem);color:var(--text);max-width:520px;line-height:1.85;margin-bottom:2.5rem;}
+    .hero-actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#06090f;border:none;padding:0.9rem 2.2rem;font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.08em;cursor:pointer;text-transform:uppercase;transition:all 0.25s;}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(200,168,75,0.35);}
+    .btn-outline{background:transparent;color:var(--cyan);border:1px solid rgba(0,200,255,0.35);padding:0.9rem 2.2rem;font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;text-transform:uppercase;letter-spacing:0.08em;text-decoration:none;display:inline-block;transition:all 0.25s;}
+    .btn-outline:hover{background:rgba(0,200,255,0.05);border-color:var(--cyan);}
+    .contract-bar{background:#04060a;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0.85rem 1.5rem;font-family:'Courier New',monospace;font-size:0.68rem;color:#1e2a3a;text-align:center;word-break:break-all;}
+    .contract-bar span{color:var(--gold);opacity:0.45;}
+    .section{max-width:700px;margin:0 auto;padding:5rem 1.5rem;}
+    .section-label{font-size:0.62rem;letter-spacing:0.35em;text-transform:uppercase;color:var(--cyan);margin-bottom:0.8rem;opacity:0.65;}
+    .section h2{font-family:'Cinzel',serif;font-size:clamp(1.4rem,4vw,2rem);color:var(--white);margin-bottom:1.2rem;font-weight:700;}
+    .section p{font-size:0.95rem;line-height:1.85;margin-bottom:1rem;color:var(--text);}
+    .funds{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px;background:var(--border);margin:2.5rem 0;}
+    .fund-card{background:var(--card);padding:1.8rem 1.4rem;transition:background 0.2s;}
+    .fund-card:hover{background:#111828;}
+    .fund-icon{font-size:1.5rem;margin-bottom:0.8rem;}
+    .fund-card h3{font-family:'Cinzel',serif;font-size:0.78rem;color:var(--gold);letter-spacing:0.06em;margin-bottom:0.5rem;}
+    .fund-card p{font-size:0.82rem;line-height:1.6;opacity:0.65;margin:0;}
+    .wallet-box{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--gold);padding:2.2rem;margin-top:2.5rem;}
+    .wallet-box h3{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--white);margin-bottom:0.4rem;}
+    .wallet-box>p{font-size:0.84rem;opacity:0.55;margin-bottom:1.5rem;}
+    .ref-banner{background:rgba(0,200,255,0.06);border:1px solid rgba(0,200,255,0.2);padding:0.9rem 1.2rem;margin-bottom:1.5rem;font-size:0.83rem;display:none;}
+    .ref-banner strong{color:var(--cyan);}
+    .input-group{display:flex;flex-direction:column;gap:0.7rem;}
+    .input-group input{background:var(--bg);border:1px solid var(--border);color:var(--white);padding:0.85rem 1rem;font-family:'Inter',sans-serif;font-size:0.88rem;outline:none;width:100%;transition:border-color 0.2s;}
+    .input-group input:focus{border-color:var(--cyan);}
+    .input-group input::placeholder{color:#1e2a3a;}
+    #status-msg{margin-top:1rem;font-size:0.88rem;line-height:1.6;display:none;}
+    .status-ok{color:#4caf50;display:block!important;}
+    .status-error{color:#f44336;display:block!important;}
+    .status-wait{color:var(--cyan);display:block!important;}
+    .ref-box{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--cyan);padding:2rem;margin-top:2.5rem;}
+    .ref-box h3{font-family:'Cinzel',serif;font-size:1rem;color:var(--white);margin-bottom:0.4rem;}
+    .ref-box p{font-size:0.84rem;opacity:0.55;margin-bottom:1.2rem;}
+    .ref-link-display{background:var(--bg);border:1px solid var(--border);padding:0.85rem 1rem;font-family:'Courier New',monospace;font-size:0.72rem;color:var(--cyan);word-break:break-all;margin-bottom:0.8rem;}
+    .btn-copy{background:transparent;color:var(--cyan);border:1px solid rgba(0,200,255,0.3);padding:0.6rem 1.2rem;font-size:0.8rem;cursor:pointer;letter-spacing:0.05em;transition:all 0.2s;}
+    .btn-copy:hover{background:rgba(0,200,255,0.08);}
+    .my-wallet-input{background:var(--bg);border:1px solid var(--border);color:var(--white);padding:0.85rem 1rem;font-family:'Courier New',monospace;font-size:0.82rem;outline:none;width:100%;transition:border-color 0.2s;margin-bottom:0.8rem;}
+    .my-wallet-input:focus{border-color:var(--cyan);}
+    .my-wallet-input::placeholder{color:#1e2a3a;}
+    .metamask-box{background:var(--card);border:1px solid var(--border);padding:1.8rem;margin-top:0.8rem;display:none;}
+    .metamask-box h3{font-family:'Cinzel',serif;font-size:0.95rem;color:var(--white);margin-bottom:1.2rem;}
+    .step{display:flex;gap:0.8rem;align-items:flex-start;margin-bottom:1rem;}
+    .step-num{min-width:1.5rem;height:1.5rem;background:var(--cyan);color:var(--bg);font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .step p{font-size:0.83rem;line-height:1.5;margin:0;}
+    .link-list{display:flex;flex-direction:column;gap:0.6rem;margin-top:1.5rem;}
+    .link-item{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);padding:0.9rem 1.2rem;text-decoration:none;color:var(--text);font-size:0.85rem;transition:all 0.2s;}
+    .link-item:hover{border-color:var(--cyan);color:var(--white);}
+    .link-item span{color:var(--cyan);font-size:0.75rem;letter-spacing:0.1em;}
+    .divider{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);}
+    footer{text-align:center;padding:3rem 1.5rem;border-top:1px solid var(--border);}
+    .footer-logo{width:48px;height:48px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;border:1px solid rgba(200,168,75,0.15);opacity:0.5;}
+    .footer-logo img{width:100%;height:100%;object-fit:cover;}
+    footer .brand{font-family:'Cinzel',serif;color:var(--gold);font-size:0.9rem;margin-bottom:0.5rem;opacity:0.6;letter-spacing:0.12em;}
+    footer p{font-size:0.72rem;color:#141e2e;line-height:2;}
+    .toggle-link{margin-top:1rem;font-size:0.82rem;opacity:0.4;cursor:pointer;color:var(--cyan);}
+    @media(max-width:480px){.wallet-box,.ref-box{padding:1.4rem;}.funds{grid-template-columns:1fr;}.logo-wrap{width:150px;height:150px;}}
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <h1>TOKEN JAGUAR</h1>
+  <p class="sub">Mocoa Protocol · Putumayo · Colombia Amazónica</p>
+  <p>Un ecosistema de comercio justo tokenizado desde la Amazonía colombiana. Cada JAG es propiedad real — declarada e inmutable en blockchain.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="document.getElementById('unirse').scrollIntoView({behavior:'smooth'})">Unirme al Club</button>
+    <a class="btn-outline" href="https://polygonscan.com/token/0x3f216063e9EF667583fb4eA8A9677d6e532ebB94" target="_blank">Ver contrato</a>
+  </div>
+</section>
+
+<div class="contract-bar">Polygon Mainnet &nbsp;·&nbsp; <span>0x3f216063e9EF667583fb4eA8A9677d6e532ebB94</span> &nbsp;·&nbsp; 1,000,000 JAG</div>
+
+<section class="section">
+  <p class="section-label">El ecosistema</p>
+  <h2>¿Qué es Mocoa Protocol?</h2>
+  <p>Infraestructura económica alternativa construida desde el Putumayo amazónico. Cada JAG representa propiedad proporcional sobre el ecosistema completo — declarada e inmutable en blockchain.</p>
+  <p>No necesitas comprar JAG para ser Clubber. Puedes ganarlo con tu tiempo, trabajo verificado en el Banco de Tiempo, o protegiendo la Amazonía como guardián.</p>
+  <div class="funds">
+    <div class="fund-card"><div class="fund-icon">🌱</div><h3>Emprendimientos Mocoa</h3><p>Cada transacción aporta automáticamente a negocios de subsistencia locales en Putumayo.</p></div>
+    <div class="fund-card"><div class="fund-icon">🏠</div><h3>Habitantes de Calle</h3><p>Financiamiento automático para atención, alimentación y reinserción en Mocoa.</p></div>
+    <div class="fund-card"><div class="fund-icon">🌳</div><h3>Protección Amazonía</h3><p>Pago directo a guardianes de fauna, flora, ríos y montañas — validado por satélite.</p></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section" id="unirse">
+  <p class="section-label">Membresía</p>
+  <h2>Únete al Club Jaguar</h2>
+  <p>Para recibir tu primer JAG y activar tu membresía, ingresa tu dirección de wallet en Polygon.</p>
+
+  <div class="wallet-box">
+    <h3>Solicitar membresía</h3>
+    <div class="ref-banner" id="ref-banner">🐆 Fuiste invitado por <strong id="ref-display"></strong> — quedarás vinculado como su referido de por vida.</div>
+    <p>Ingresa tu dirección en Polygon (0x...) y tu nombre.</p>
+    <div class="input-group">
+      <input type="text" id="wallet-input" placeholder="0x... dirección Polygon" maxlength="42" />
+      <input type="text" id="name-input" placeholder="Tu nombre (opcional)" maxlength="60" />
+      <button class="btn-primary" onclick="solicitarMembresia()">Solicitar 1 JAG de bienvenida</button>
+    </div>
+    <div id="status-msg"></div>
+  </div>
+
+  <p class="toggle-link" onclick="toggleMetamask()">▸ No tengo wallet — ¿cómo creo una?</p>
+
+  <div class="metamask-box" id="metamask-box">
+    <h3>Cómo obtener una wallet en Polygon</h3>
+    <div class="step"><div class="step-num">1</div><p>Descarga <strong style="color:var(--white)">MetaMask</strong> desde metamask.io.</p></div>
+    <div class="step"><div class="step-num">2</div><p>Crea una wallet. Guarda las 12 palabras en papel — nunca en fotos.</p></div>
+    <div class="step"><div class="step-num">3</div><p>Selecciona la red <strong style="color:var(--white)">Polygon</strong>. Tu dirección empieza con <code style="color:var(--cyan)">0x</code>.</p></div>
+    <div class="step"><div class="step-num">4</div><p>Copia tu dirección y pégala arriba.</p></div>
+    <div class="step"><div class="step-num">5</div><p>Para ver tu JAG agrega el token: <code style="color:var(--cyan);font-size:0.73rem;">0x3f216063e9EF667583fb4eA8A9677d6e532ebB94</code></p></div>
+  </div>
+
+  <div class="ref-box">
+    <h3>Mi link de referido</h3>
+    <p>Ingresa tu dirección para generar tu link personal. Cada persona que se una por tu link quedará vinculada a ti para siempre.</p>
+    <input class="my-wallet-input" id="my-wallet" placeholder="0x... mi dirección Polygon" maxlength="42" oninput="generarLink()" />
+    <div class="ref-link-display" id="ref-link-display" style="opacity:0.3;">https://gaboletto1.github.io/mocoa?ref=0x...</div>
+    <button class="btn-copy" onclick="copiarLink()">📋 Copiar link</button>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <p class="section-label">Transparencia</p>
+  <h2>Verificable en blockchain</h2>
+  <p>Todos los contratos están en Polygon Mainnet. Cualquier persona puede verificar la distribución y el historial completo.</p>
+  <div class="link-list">
+    <a class="link-item" href="https://polygonscan.com/token/0x3f216063e9EF667583fb4eA8A9677d6e532ebB94" target="_blank">JAG Token — Polygonscan <span>→ VER</span></a>
+    <a class="link-item" href="https://polygonscan.com/address/0xADeA1A66c9150B36D2e54142652fdeda0396E064" target="_blank">BTCVault — Bóveda Bitcoin <span>→ VER</span></a>
+    <a class="link-item" href="https://polygonscan.com/address/0x0E28D6104b009F0050404A8FD91b09eA858F54D3" target="_blank">WelcomeModule — Membresías <span>→ VER</span></a>
+    <a class="link-item" href="https://polygonscan.com/address/0xbA1AFfb220821ddcF5f7b00839016EF0a517C186" target="_blank">ReferralRegistry — Referidos <span>→ VER</span></a>
+  </div>
+</section>
+
+<footer>
